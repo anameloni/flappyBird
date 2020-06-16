@@ -1,0 +1,36 @@
+<!DOCTYPE html!>
+<html lang="en">
+
+<!Users doens't access the header!>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird - DevSoutinho</title>
+</head>
+
+<!This part of the code is displayed on the screen!>
+<body>
+    <!Blank rectangle whre we will draw the game!>
+    <canvas id="game-canvas" width="320" height="480"></canvas>
+    
+    <!CSS starts here, making possible to centralize and let HTML more beutiful!>
+    <style>
+        body {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        }
+        
+        canvas {
+        border: 1px solid #000;
+        display: block;
+        margin: 0 auto;
+        }
+    </style>
+
+    <!Call jogo.js!>
+    <script src="./jogo.js"></script>
+</body>
+
+</html>
