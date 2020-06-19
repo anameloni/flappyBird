@@ -104,16 +104,66 @@ const scenario = {
     }
 }
 
+//Object startScreen
+const startScreen = {
+    sourceX: 134,//sx -> source initial image X
+    sourceY: 0,//sy -> source initial image Y
+    sWidth: 174,//sWidth -> source width
+    sHeight: 152,//sHeight -> source height
+    destinyX: (canvas.width/2)-(174/2),//dx -> destiny X, X on CANVAS
+    destinyY: 50,//dy -> destiny Y, Y on CANVAS
+
+    draw () {
+        //Insert images atributes to be displayd in screen, once. With loop, seems that the image is constantly on scrren
+        context.drawImage(
+            sprites,
+            startScreen.sourceX,startScreen.sourceY,
+            startScreen.sWidth,startScreen.sHeight,
+            startScreen.destinyX,startScreen.destinyY,
+            startScreen.sWidth,startScreen.sHeight,
+        );
+    }
+}
+
+//
+//Screens
+//
+let activeScreen ={};
+function updateToScreen(newScreen) {
+    activeScreen = newScreen;
+}
+
+
+const screens = {
+    begining: {
+        draw(){
+            startScreen.draw();
+        },
+        update(){
+
+        }
+    },
+
+    gameScreen: {
+        draw(){
+            scenario.draw();
+            floor.draw();
+            flappyBird.draw();
+        },
+        update(){
+            flappyBird.spriteUpdate();
+        },
+    }
+}
 //Show spintes in screen repedidaly
 function loop(){
-    scenario.draw();
-    floor.draw();
-    flappyBird.draw();
-    flappyBird.spriteUpdate();
+    activeScreen.draw();
+    activeScreen.update();
 
     requestAnimationFrame(loop);
 }
 
 
 //STAR GAME
+updateToScreen(screens.begining)
 loop();
