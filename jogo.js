@@ -50,6 +50,11 @@ const flappyBird = {
     destinyY: 50,//dy -> destiny Y, Y on CANVAS
     speed: 0, //dy speed
     gravity: 0.25, //increase of speed
+    leap: 4.6,
+
+    jump(){
+        flappyBird.speed =- this.leap;
+    },
 
     //Change FlappyBird spriter once. with loop, seems that the image is constantly on scrren
     spriteUpdate() {
@@ -157,6 +162,11 @@ const screens = {
             floor.draw();
             flappyBird.draw();
         },
+        //Make the bird jump when the screen be toutched
+        click(){
+            flappyBird.jump();
+        },
+
         update(){
             flappyBird.spriteUpdate();
         },
