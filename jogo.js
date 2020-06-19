@@ -128,17 +128,24 @@ const startScreen = {
 //
 //Screens
 //
-let activeScreen ={};
+let activeScreen ={}; //var to keep the current screen shown
+//Change the screens
 function updateToScreen(newScreen) {
     activeScreen = newScreen;
 }
 
-
 const screens = {
     begining: {
         draw(){
-            startScreen.draw();
+            scenario.draw();
+            floor.draw();
+            startScreen.draw();  
         },
+        //Change from start screen to the game when the screen is toutched
+        click(){
+            updateToScreen(screens.gameScreen);
+        },
+        
         update(){
 
         }
@@ -163,7 +170,15 @@ function loop(){
     requestAnimationFrame(loop);
 }
 
-
+//
 //STAR GAME
-updateToScreen(screens.begining)
+//
+//Event to make something and somebody beat the screen
+window.addEventListener('click', function() {
+    if(activeScreen.click()){
+        activeScreen,click();
+    };
+});
+
+updateToScreen(screens.begining) //The game starts with the begining screen
 loop();
