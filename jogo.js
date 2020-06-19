@@ -51,7 +51,7 @@ const flappyBird = {
     speed: 0, //dy speed
     gravity: 0.25, //increase of speed
 
-    //Change FlappyBird spriter once.ith loop, seems that the image is constantly on scrren
+    //Change FlappyBird spriter once. with loop, seems that the image is constantly on scrren
     spriteUpdate() {
         flappyBird.speed += flappyBird.gravity,
         flappyBird.destinyY += flappyBird.speed;
