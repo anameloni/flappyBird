@@ -1,5 +1,7 @@
 console.log('[AnaMeloni] Flappy Bird');
 
+//Indicates the initial frame
+let frames = 0;
 //Inserting sound
 const hitSound = new Audio(); 
 hitSound.src = "./Sound_efects/hit.wav";
@@ -105,11 +107,35 @@ function createFlappyBird() { //Factory
             flappyBird.destinyY += flappyBird.speed;
         },
 
+        //Array to story source/original sprite positions
+        movement: [
+            {sourceX: 0, sourceY: 0 }, //Wings up
+            {sourceX: 0, sourceY: 26 }, //Wings midlle
+            {sourceX: 0, sourceY: 52 }, //Wings down
+            {sourceX: 0, sourceY: 26 }, //Wings midlle
+        ],
+        
+        currentFrame: 0, 
+        
+        updateCurrentFrame () { //Update the game according the current frame
+            const framesBreak = 10; //Each 10 frames the bird wings image will change
+            const passedTheBreak = frames % framesBreak === 0; //Ensures that the value will neve exceeds 10 and the image changes when the break be 0
+            
+            if (passedTheBreak) {
+                const incrementBase = 1;
+                const i = incrementBase + flappyBird.currentFrame;
+                const repetitionBasis = flappyBird.movement.length;
+                flappyBird.currentFrame = i%repetitionBasis; //make the next frame show the next array position
+            }
+        },
+
         //Insert images atributes to be displayd in screen, once. With loop, seems that the image is constantly on scrren
         draw () {
+            flappyBird.updateCurrentFrame();
+            const {sourceX, sourceY} = flappyBird.movement[flappyBird.currentFrame]; //This notations desustrutures the iten os the array
             context.drawImage(
                 sprites,//image
-                flappyBird.sourceX,flappyBird.sourceX,
+                sourceX,sourceY,
                 flappyBird.sWidth,flappyBird.sHeight,
                 flappyBird.destinyX,flappyBird.destinyY,
                 flappyBird.sWidth,//dWidth -> destiny width
@@ -239,7 +265,7 @@ const screens = {
 function loop(){
     activeScreen.draw();
     activeScreen.update();
-
+    frames += 1; //Frame increment to indicates the current frame
     requestAnimationFrame(loop);
 }
 
