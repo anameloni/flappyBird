@@ -1,7 +1,11 @@
 console.log('[AnaMeloni] Flappy Bird');
 
+//Inserting sound
+const hitSound = new Audio(); 
+hitSound.src = "./Sound_efects/hit.wav";
+
 //Create an object Image and put sprites.png inside it.
-const sprites = new Image();
+const sprites = new Image(); 
 sprites.src = './sprites.png';
 
 
@@ -40,39 +44,66 @@ const floor = {
     }
 }
 
-//Object Flappy Bird
-const flappyBird = {
-    sourceX: 0,//sx -> source initial image X
-    sourceY: 0,//sy -> source initial image Y
-    sWidth: 34,//sWidth -> source width
-    sHeight: 24,//sHeight -> source height
-    destinyX: 10,//dx -> destiny X, X on CANVAS
-    destinyY: 50,//dy -> destiny Y, Y on CANVAS
-    speed: 0, //dy speed
-    gravity: 0.25, //increase of speed
-    leap: 4.6,
+//Determinies what is a colision
+function makeColision(flappyBird, floor){
+    const flappyBirdYScreen = flappyBird.destinyY+flappyBird.sHeight;
+    const floorYScreen = floor.destinyY;
 
-    jump(){
-        flappyBird.speed =- this.leap;
-    },
-
-    //Change FlappyBird spriter once. with loop, seems that the image is constantly on scrren
-    spriteUpdate() {
-        flappyBird.speed += flappyBird.gravity,
-        flappyBird.destinyY += flappyBird.speed;
-     },
-
-    //Insert images atributes to be displayd in screen, once. With loop, seems that the image is constantly on scrren
-    draw () {
-        context.drawImage(
-            sprites,//image
-            flappyBird.sourceX,flappyBird.sourceX,
-            flappyBird.sWidth,flappyBird.sHeight,
-            flappyBird.destinyX,flappyBird.destinyY,
-            flappyBird.sWidth,//dWidth -> destiny width
-            flappyBird.sHeight, //dHeight -> destiny height
-        );
+    if(flappyBirdYScreen >= floorYScreen){
+        return true;
     }
+    return false;
+}
+
+//Object Flappy Bird
+function createFlappyBird() { //Factory
+    const flappyBird = {
+        sourceX: 0,//sx -> source initial image X
+        sourceY: 0,//sy -> source initial image Y
+        sWidth: 34,//sWidth -> source width
+        sHeight: 24,//sHeight -> source height
+        destinyX: 10,//dx -> destiny X, X on CANVAS
+        destinyY: 50,//dy -> destiny Y, Y on CANVAS
+        speed: 0, //dy speed
+        gravity: 0.25, //increase of speed
+        leap: 4.6,
+
+        jump(){
+            flappyBird.speed =- this.leap;
+        },
+
+        //Change FlappyBird spriter once. with loop, seems that the image is constantly on scrren
+        spriteUpdate() {
+            //Verifies whem bird falls on the floor
+            if(makeColision(flappyBird, floor)){
+                //Play a colision sound whrn the bird falls on the floor
+                hitSound.play(); 
+                
+                //Delay 1 sec on update scrren
+                setTimeout(() => {
+                    updateToScreen(screens.begining); //Change to startScreen
+                }, 500);
+                
+                return;
+            }
+
+            flappyBird.speed += flappyBird.gravity,
+            flappyBird.destinyY += flappyBird.speed;
+        },
+
+        //Insert images atributes to be displayd in screen, once. With loop, seems that the image is constantly on scrren
+        draw () {
+            context.drawImage(
+                sprites,//image
+                flappyBird.sourceX,flappyBird.sourceX,
+                flappyBird.sWidth,flappyBird.sHeight,
+                flappyBird.destinyX,flappyBird.destinyY,
+                flappyBird.sWidth,//dWidth -> destiny width
+                flappyBird.sHeight, //dHeight -> destiny height
+            );
+        }
+    }
+    return flappyBird;
 }
 
 //Object scenario
@@ -131,20 +162,34 @@ const startScreen = {
 }
 
 //
-//Screens
+//SCREENS
 //
+
+const global = {}; //Global variable created to make possible to access flappyBirds created on the Factory
 let activeScreen ={}; //var to keep the current screen shown
+
 //Change the screens
 function updateToScreen(newScreen) {
     activeScreen = newScreen;
-}
+
+    if(activeScreen.initializes){
+        activeScreen.initializes();
+    }
+};
 
 const screens = {
     begining: {
+        //Start the FlappyBird's factory
+        initializes(){
+            global.flappyBird = createFlappyBird();
+        },
+
+        //Draw startGame screen
         draw(){
             scenario.draw();
             floor.draw();
-            startScreen.draw();  
+            startScreen.draw(); 
+            global.flappyBird.draw();
         },
         //Change from start screen to the game when the screen is toutched
         click(){
@@ -160,18 +205,19 @@ const screens = {
         draw(){
             scenario.draw();
             floor.draw();
-            flappyBird.draw();
+            global.flappyBird.draw();
         },
         //Make the bird jump when the screen be toutched
         click(){
-            flappyBird.jump();
+            global.flappyBird.jump();
         },
 
         update(){
-            flappyBird.spriteUpdate();
+            global.flappyBird.spriteUpdate();
         },
     }
 }
+
 //Show spintes in screen repedidaly
 function loop(){
     activeScreen.draw();
